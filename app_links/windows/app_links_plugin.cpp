@@ -45,14 +45,17 @@ namespace applinks
 	std::optional<std::string> AppLinksPlugin::GetLink()
 	{
 		int argc;
-		wchar_t** argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-		if (argv == nullptr || argc < 2) {
+		wchar_t **argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
+		if (argv == nullptr || argc < 2)
+		{
 			::LocalFree(argv);
+			std::cout << "No command-line argument received.\n"; // Log for debugging
 			return std::nullopt;
 		}
 
 		std::wstring arg(argv[1]);
 		::LocalFree(argv);
+		std::cout << "Command-line argument: " << std::wstring(arg.begin(), arg.end()) << "\n"; // Log the argument
 
 		// Convert wide string to basic string (flutter cannot handle wide strings?)
 		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &arg[0], (int)arg.size(), NULL, 0, NULL, NULL);
@@ -140,7 +143,6 @@ namespace applinks
 			}
 		}
 
-
 		return std::nullopt;
 	}
 
@@ -152,10 +154,11 @@ namespace applinks
 		eventSink_ = std::move(events);
 
 		auto link = GetLink();
-		if (!initialLinkSent_ && link) {
+		if (!initialLinkSent_ && link)
+		{
 			initialLinkSent_ = true;
 			initialLink_ = link;
-		  eventSink_->Success(initialLink_.value());
+			eventSink_->Success(initialLink_.value());
 		}
 
 		return nullptr;
