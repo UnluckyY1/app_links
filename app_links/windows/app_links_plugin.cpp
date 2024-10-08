@@ -1,5 +1,6 @@
 #include "app_links_plugin.h"
-#include <iostream> // For logging
+#include <iostream> 
+#include <windows.h>
 #include <regex>
 #include "include/app_links/app_links_plugin_c_api.h"
 
@@ -42,34 +43,38 @@ namespace applinks
 	}
 
 	// static, Parse command line
-	std::optional<std::string> AppLinksPlugin::GetLink()
-	{
-		int argc;
-		wchar_t **argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-		if (argv == nullptr)
-		{
-			std::cout << "Failed to parse command-line arguments.\n"; // Log failure
-			return std::nullopt;
-		}
+std::optional<std::string> AppLinksPlugin::GetLink()
+{
+    int argc;
+    wchar_t **argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
+    if (argv == nullptr)
+    {
+        OutputDebugString(L"Failed to parse command-line arguments.\n"); // Log failure
+        return std::nullopt;
+    }
 
-		std::cout << "Number of command-line arguments (argc): " << argc << "\n";
+    std::wstring logMessage = L"Number of command-line arguments (argc): " + std::to_wstring(argc) + L"\n";
+    OutputDebugString(logMessage.c_str());
 
-		if (argc < 2)
-		{														
-			std::cout << "No additional arguments received.\n"; 
-			::LocalFree(argv);
-			return std::nullopt;
-		}
+    if (argc < 2)
+    {                                                        
+        OutputDebugString(L"No additional arguments received.\n"); 
+        ::LocalFree(argv);
+        return std::nullopt;
+    }
 
-		std::wstring arg(argv[1]);
-		::LocalFree(argv);
-		// Convert wide string to basic string (flutter cannot handle wide strings?)
-		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &arg[0], (int)arg.size(), NULL, 0, NULL, NULL);
-		std::string link(size_needed, 0);
-		WideCharToMultiByte(CP_UTF8, 0, &arg[0], (int)arg.size(), &link[0], size_needed, NULL, NULL);
+    std::wstring arg(argv[1]);
+    ::LocalFree(argv);
+    // Convert wide string to basic string (flutter cannot handle wide strings?)
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, &arg[0], (int)arg.size(), NULL, 0, NULL, NULL);
+    std::string link(size_needed, 0);
+    WideCharToMultiByte(CP_UTF8, 0, &arg[0], (int)arg.size(), &link[0], size_needed, NULL, NULL);
 
-		return link;
-	}
+    logMessage = L"File opened: " + std::wstring(arg) + L"\n"; 
+    OutputDebugString(logMessage.c_str());
+
+    return link;
+}
 
 	AppLinksPlugin::AppLinksPlugin(PluginRegistrarWindows *registrar)
 		: registrar_(registrar)
