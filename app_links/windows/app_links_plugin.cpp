@@ -1,5 +1,5 @@
 #include "app_links_plugin.h"
-
+#include <iostream> // For logging
 #include <regex>
 #include "include/app_links/app_links_plugin_c_api.h"
 
@@ -46,17 +46,23 @@ namespace applinks
 	{
 		int argc;
 		wchar_t **argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-		if (argv == nullptr || argc < 2)
+		if (argv == nullptr)
 		{
+			std::cout << "Failed to parse command-line arguments.\n"; // Log failure
+			return std::nullopt;
+		}
+
+		std::cout << "Number of command-line arguments (argc): " << argc << "\n";
+
+		if (argc < 2)
+		{														
+			std::cout << "No additional arguments received.\n"; 
 			::LocalFree(argv);
-			std::cout << "No command-line argument received.\n"; // Log for debugging
 			return std::nullopt;
 		}
 
 		std::wstring arg(argv[1]);
 		::LocalFree(argv);
-		std::cout << "Command-line argument: " << std::wstring(arg.begin(), arg.end()) << "\n"; // Log the argument
-
 		// Convert wide string to basic string (flutter cannot handle wide strings?)
 		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &arg[0], (int)arg.size(), NULL, 0, NULL, NULL);
 		std::string link(size_needed, 0);
