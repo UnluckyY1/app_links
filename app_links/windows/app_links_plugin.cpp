@@ -144,13 +144,8 @@ std::optional<std::string> AppLinksPlugin::GetLink()
 		if (message == WM_COMMAND)
 		{
 			int wmId = LOWORD(wparam);
-			switch (wmId)
-			{
-			case IDM_GETARGSWAS:
+			if (wmId == IDM_GETARGSWAS) {
 				SendAppLink(hwnd);
-				break;
-			default:
-				return DefWindowProc(hwnd, message, wparam, lparam);
 			}
 		}
 

@@ -2,12 +2,12 @@ import Flutter
 import UIKit
 
 public class AppLinks {
-  static public let shared = SwiftAppLinksPlugin()
+  static public let shared = AppLinksIosPlugin()
 
   private init() {}
 }
 
-public final class SwiftAppLinksPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
+public final class AppLinksIosPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private var eventSink: FlutterEventSink?
   
   private var initialLink: String?
@@ -68,14 +68,11 @@ public final class SwiftAppLinksPlugin: NSObject, FlutterPlugin, FlutterStreamHa
     restorationHandler: @escaping ([Any]) -> Void
   ) -> Bool {
     
-    switch userActivity.activityType {
-    case NSUserActivityTypeBrowsingWeb:
-      if let url = userActivity.webpageURL {
-        handleLink(url: url)
-      }
-      return false
-    default: return false
+    if let url = userActivity.webpageURL {
+      handleLink(url: url)
     }
+    
+    return false
   }
   
   // Custom URL schemes
