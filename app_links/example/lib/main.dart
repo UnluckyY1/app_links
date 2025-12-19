@@ -35,7 +35,7 @@ const kWindowsScheme = 'sample';
 
 void main() {
   // Register our protocol only on Windows platform
-  // registerProtocolHandler(kWindowsScheme);
+  registerProtocolHandler(kWindowsScheme);
 
   runApp(const MyApp());
 }
