@@ -68,7 +68,7 @@ namespace applinks
 		else if (cds->cbData % 2 == 0)
 		{
 			int zeros = 0;
-			int checks = std::min(10, int(cds->cbData / 2));
+			int checks = (std::min)(10, int(cds->cbData / 2));
 			for (int i = 0; i < checks; ++i)
 			{
 				if (bytes[i * 2 + 1] == 0)
@@ -140,7 +140,8 @@ namespace applinks
 		}
 
 		// POSIX-style leading '/C:/...' -> 'C:\...'
-		if (path.size() >= 3 && path.front() == L'/' && std::iswalpha(path[1]) && path[2] == L':')
+		if (path.size() >= 3 && path.front() == L'/' && iswalpha(path[1]) && path[2] == L':')
+
 		{
 			path = path.substr(1);
 		}
